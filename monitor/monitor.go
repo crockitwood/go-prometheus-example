@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// 初始化 web_reqeust_total 指标表示接收http请求总次数
+// 初始化 web_reqeust_total， counter类型指标， 表示接收http请求总次数
 var WebRequestTotal = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "web_reqeust_total",
@@ -16,6 +16,7 @@ var WebRequestTotal = prometheus.NewCounterVec(
 	[]string{"method", "endpoint"},
 )
 
+// web_request_duration_seconds，Histogram类型指标，bucket代表duration的分布区间
 var WebRequestDuration = prometheus.NewHistogramVec(
 	prometheus.HistogramOpts{
 		Name:    "web_request_duration_seconds",
@@ -31,6 +32,8 @@ func init() {
 	prometheus.MustRegister(WebRequestDuration)
 }
 
+
+// 包装 handler function,不侵入业务逻辑
 func Monitor(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
